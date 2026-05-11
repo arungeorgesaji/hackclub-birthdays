@@ -1,13 +1,21 @@
 <script lang="ts">
+  export let session: { name: string; pfp: string } | null = null;
 </script>
 
 <nav class="nav glass">
   <a class="brand" href="/">
-    <span class="brand-mark"></span>
     <span>Hack Club Birthdays</span>
   </a>
 
-  <p class="note">A shared birthday board for Hack Club.</p>
+  <div class="meta">
+    <p class="note">A shared birthday board for hackclub members.</p>
+    {#if session}
+      <div class="user">
+        <img src={session.pfp} alt={session.name} />
+        <span>@{session.name}</span>
+      </div>
+    {/if}
+  </div>
 </nav>
 
 <style>
@@ -25,17 +33,14 @@
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.02em;
   }
 
-  .brand-mark {
-    width: 0.85rem;
-    height: 0.85rem;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--gold), #f3e4b4);
-    box-shadow: 0 0 16px rgba(243, 228, 180, 0.28);
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
   .note {
@@ -44,8 +49,30 @@
     font-size: 0.95rem;
   }
 
+  .user {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .user img {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 999px;
+    object-fit: cover;
+  }
+
+  .user span {
+    font-size: 0.9rem;
+  }
+
   @media (max-width: 720px) {
     .nav {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .meta {
       flex-direction: column;
       align-items: flex-start;
     }

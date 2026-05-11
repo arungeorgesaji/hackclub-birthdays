@@ -1,11 +1,16 @@
 <script lang="ts">
   import { fade, fly } from 'svelte/transition';
-  import { birthdayEntries, getSlackChannelUrl } from '$lib/stores/birthdays';
   import TopNav from '$lib/components/TopNav.svelte';
+  import { getSlackChannelUrl } from '$lib/utils/slack';
   import { formatBirthdayLabel, getUpcomingBirthdays } from '$lib/utils/calendar';
 
+  export let data: {
+    session: { id: string; name: string; pfp: string } | null;
+    birthdays: import('$lib/data/birthdays').BirthdayPerson[];
+  };
+
   const now = new Date();
-  $: lineup = getUpcomingBirthdays($birthdayEntries, now, 8);
+  $: lineup = getUpcomingBirthdays(data.birthdays, now, 8);
 </script>
 
 <svelte:head>
@@ -14,7 +19,7 @@
 
 <div class="shell">
   <div class="page">
-    <TopNav />
+    <TopNav session={data.session} />
 
     <section class="headline glass" in:fade={{ duration: 420 }}>
       <span class="pill">

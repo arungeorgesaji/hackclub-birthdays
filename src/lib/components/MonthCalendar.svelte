@@ -1,8 +1,8 @@
 <script lang="ts">
   import { fade, fly, scale } from 'svelte/transition';
   import type { BirthdayPerson } from '$lib/data/birthdays';
-  import { getSlackChannelUrl } from '$lib/stores/birthdays';
-  import { buildCalendar, formatBirthdayLabel, formatMonth, getMonthEntries } from '$lib/utils/calendar';
+  import { getSlackChannelUrl } from '$lib/utils/slack';
+  import { buildCalendar, formatMonth, getMonthEntries } from '$lib/utils/calendar';
 
   export let month: Date;
   export let entries: BirthdayPerson[] = [];
@@ -60,12 +60,12 @@
             {#if cell.entries.length}
               {#each cell.entries as person}
                 <div class="birthday-card" transition:scale={{ start: 0.92, duration: 220 }}>
-                  <div class="avatar" style={`background:${accent(person)}`}></div>
-                  <div>
+                  <img class="avatar" src={person.pfp} alt={person.name} />
+                  <div class="birthday-copy">
                     <strong>{person.name}</strong>
                     {#if person.slackChannelId}
                       <a class="slack-link" href={getSlackChannelUrl(person.slackChannelId) ?? '#'} target="_blank" rel="noreferrer">
-                        Slack channel
+                        #{person.slackChannelName ?? 'Slack channel'}
                       </a>
                     {/if}
                   </div>
@@ -182,6 +182,11 @@
   .birthday-card strong {
     display: block;
     margin-bottom: 0.18rem;
+    overflow-wrap: anywhere;
+  }
+
+  .birthday-copy {
+    min-width: 0;
   }
 
   .quiet {
@@ -192,10 +197,16 @@
   }
 
   .slack-link {
-    display: inline-block;
+    display: -webkit-box;
     margin-top: 0.28rem;
     color: var(--cyan);
     font-size: 0.82rem;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 
   .avatar {
@@ -203,6 +214,7 @@
     height: 0.95rem;
     border-radius: 999px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.14);
+    object-fit: cover;
   }
 
   .quiet {
