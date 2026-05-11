@@ -2,31 +2,22 @@
   import { fade, fly, scale } from 'svelte/transition';
   import type { BirthdayPerson } from '$lib/data/birthdays';
   import { getSlackChannelUrl } from '$lib/utils/slack';
-  import { buildCalendar, formatMonth, getMonthEntries } from '$lib/utils/calendar';
+  import { buildCalendar, formatMonth } from '$lib/utils/calendar';
 
   export let month: Date;
   export let entries: BirthdayPerson[] = [];
 
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  let selectedCell:
+    | {
+        day: number;
+        iso: string;
+        entries: BirthdayPerson[];
+      }
+    | null = null;
 
   $: cells = buildCalendar(entries, month);
-  $: monthEntries = getMonthEntries(entries, month);
   $: monthLabel = formatMonth(month);
-
-  function accent(person: BirthdayPerson) {
-    switch (person.accent) {
-      case 'mint':
-        return 'linear-gradient(135deg, rgba(124, 226, 194, 0.8), rgba(80, 163, 168, 0.4))';
-      case 'ocean':
-        return 'linear-gradient(135deg, rgba(124, 207, 255, 0.85), rgba(59, 94, 183, 0.45))';
-      case 'gold':
-        return 'linear-gradient(135deg, rgba(255, 207, 112, 0.9), rgba(255, 151, 108, 0.4))';
-      case 'aurora':
-        return 'linear-gradient(135deg, rgba(188, 153, 255, 0.8), rgba(113, 221, 191, 0.42))';
-      default:
-        return 'linear-gradient(135deg, rgba(255, 141, 122, 0.85), rgba(255, 207, 112, 0.35))';
-    }
-  }
 </script>
 
 <section class="calendar glass">
@@ -58,21 +49,25 @@
 
           <div class="content">
             {#if cell.entries.length}
-              {#each cell.entries as person}
-                <div class="birthday-card" transition:scale={{ start: 0.92, duration: 220 }}>
-                  <img class="avatar" src={person.pfp} alt={person.name} />
-                  <div class="birthday-copy">
-                    <strong>{person.name}</strong>
-                    {#if person.slackChannelId}
-                      <a class="slack-link" href={getSlackChannelUrl(person.slackChannelId) ?? '#'} target="_blank" rel="noreferrer">
-                        #{person.slackChannelName ?? 'Slack channel'}
-                      </a>
-                    {/if}
-                  </div>
-                </div>
-              {/each}
-            {:else}
-              <p class="quiet">No birthdays</p>
+              <button
+                class="avatar-stack"
+                type="button"
+                aria-label={`View birthdays for ${monthLabel} ${cell.day}`}
+                onclick={() => (selectedCell = { day: cell.day!, iso: cell.iso!, entries: cell.entries })}
+              >
+                {#each cell.entries.slice(0, 6) as person, personIndex}
+                  <img
+                    class="avatar"
+                    src={person.pfp}
+                    alt={person.name}
+                    style={`z-index:${10 - personIndex}`}
+                  />
+                {/each}
+
+                {#if cell.entries.length > 6}
+                  <span class="overflow-count">+{cell.entries.length - 6}</span>
+                {/if}
+              </button>
             {/if}
           </div>
         {/if}
@@ -80,6 +75,42 @@
     {/each}
   </div>
 </section>
+
+{#if selectedCell}
+  <button
+    class="day-backdrop"
+    type="button"
+    aria-label="Close"
+    onclick={() => (selectedCell = null)}
+  ></button>
+  <div class="day-modal glass" in:fade={{ duration: 180 }}>
+    <div class="day-modal-head">
+      <div>
+        <p>Birthdays</p>
+        <strong>{monthLabel} {selectedCell.day}</strong>
+      </div>
+      <button class="close" type="button" aria-label="Close" onclick={() => (selectedCell = null)}>
+        ×
+      </button>
+    </div>
+
+    <div class="day-list">
+      {#each selectedCell.entries as person}
+        <div class="birthday-card" transition:scale={{ start: 0.92, duration: 220 }}>
+          <img class="detail-avatar" src={person.pfp} alt={person.name} />
+          <div class="birthday-copy">
+            <strong>{person.name}</strong>
+            {#if person.slackChannelId}
+              <a class="slack-link" href={getSlackChannelUrl(person.slackChannelId) ?? '#'} target="_blank" rel="noreferrer">
+                #{person.slackChannelName ?? 'Slack channel'}
+              </a>
+            {/if}
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
+{/if}
 
 <style>
   .calendar {
@@ -167,6 +198,37 @@
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
+    min-height: 5rem;
+  }
+
+  .avatar-stack {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .avatar-stack .avatar {
+    margin-right: -0.35rem;
+  }
+
+  .overflow-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.55rem;
+    height: 1.55rem;
+    margin-left: 0.45rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 700;
   }
 
   .birthday-card {
@@ -174,8 +236,8 @@
     grid-template-columns: auto 1fr;
     gap: 0.7rem;
     align-items: center;
-    padding: 0.58rem;
-    border-radius: 0.9rem;
+    padding: 0.72rem;
+    border-radius: 0.95rem;
     background: rgba(255, 255, 255, 0.045);
   }
 
@@ -187,13 +249,6 @@
 
   .birthday-copy {
     min-width: 0;
-  }
-
-  .quiet {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.84rem;
-    line-height: 1.35;
   }
 
   .slack-link {
@@ -210,15 +265,76 @@
   }
 
   .avatar {
-    width: 0.95rem;
-    height: 0.95rem;
+    width: 1.55rem;
+    height: 1.55rem;
     border-radius: 999px;
+    border: 2px solid var(--panel);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.14);
     object-fit: cover;
   }
 
-  .quiet {
-    opacity: 0.7;
+  .detail-avatar {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 999px;
+    object-fit: cover;
+  }
+
+  .day-backdrop {
+    position: fixed;
+    inset: 0;
+    border: 0;
+    background: rgba(8, 10, 14, 0.62);
+    z-index: 60;
+  }
+
+  .day-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: min(30rem, calc(100vw - 2rem));
+    max-height: min(36rem, calc(100vh - 2rem));
+    padding: 1rem;
+    border-radius: 1.25rem;
+    transform: translate(-50%, -50%);
+    z-index: 70;
+    overflow: auto;
+  }
+
+  .day-modal-head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .day-modal-head p {
+    margin: 0 0 0.25rem;
+    color: var(--muted);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .day-modal-head strong {
+    font-size: 1.35rem;
+  }
+
+  .day-list {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .close {
+    width: 2.2rem;
+    height: 2.2rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 1.35rem;
   }
 
   @media (max-width: 980px) {
