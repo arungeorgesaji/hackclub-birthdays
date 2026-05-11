@@ -1,18 +1,130 @@
 :root {
   color-scheme: dark;
-  --bg: #121018;
-  --panel: rgba(28, 25, 36, 0.82);
-  --panel-soft: rgba(34, 29, 45, 0.72);
-  --line: rgba(240, 232, 214, 0.1);
-  --text: #f6f0e4;
-  --muted: #b9b0a2;
-  --gold: #f0c674;
-  --gold-soft: #f3e4b4;
-  --rose: #d3886f;
-  --cyan: #9cc6d8;
+  --bg: #11151c;
+  --panel: rgba(24, 29, 38, 0.9);
+  --panel-soft: rgba(28, 34, 44, 0.84);
+  --line: rgba(221, 228, 241, 0.12);
+  --text: #f4f7fb;
+  --muted: #a9b3c2;
+  --gold: #7aa2ff;
+  --gold-soft: #cddcff;
+  --rose: #ff8a73;
+  --cyan: #8abbe8;
+  --bg-top: #11151c;
+  --bg-mid: #11151c;
+  --bg-bottom: #0d1016;
   --shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
   --display: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --body: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+:root[data-mode='light'] {
+  color-scheme: light;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-soft: rgba(248, 250, 253, 0.92);
+  --line: rgba(24, 34, 52, 0.12);
+  --text: #182234;
+  --muted: #667387;
+  --bg-top: #f3f6fb;
+  --bg-mid: #eef2f7;
+  --bg-bottom: #e7ebf1;
+  --shadow: 0 24px 50px rgba(25, 34, 49, 0.08);
+}
+
+:root[data-theme='slate'] {
+  --bg: #15181d;
+  --panel: rgba(32, 36, 43, 0.9);
+  --panel-soft: rgba(36, 41, 49, 0.84);
+  --line: rgba(229, 234, 240, 0.1);
+  --text: #f0f4f8;
+  --muted: #aeb6c2;
+  --gold: #91a3bc;
+  --gold-soft: #d8e0ea;
+  --rose: #e19a88;
+  --cyan: #9db4cb;
+  --bg-top: #15181d;
+  --bg-mid: #15181d;
+  --bg-bottom: #101318;
+}
+
+:root[data-theme='graphite'] {
+  --bg: #181818;
+  --panel: rgba(36, 36, 36, 0.9);
+  --panel-soft: rgba(42, 42, 42, 0.84);
+  --line: rgba(255, 255, 255, 0.08);
+  --text: #f4f1ec;
+  --muted: #b5aea4;
+  --gold: #d1b07a;
+  --gold-soft: #ead9ba;
+  --rose: #d59883;
+  --cyan: #9eb8c0;
+  --bg-top: #181818;
+  --bg-mid: #181818;
+  --bg-bottom: #131313;
+}
+
+:root[data-theme='ember'] {
+  --bg: #191417;
+  --panel: rgba(34, 28, 31, 0.9);
+  --panel-soft: rgba(40, 33, 36, 0.84);
+  --line: rgba(239, 226, 207, 0.1);
+  --text: #f6f0e4;
+  --muted: #b9b0a2;
+  --gold: #e78d5a;
+  --gold-soft: #edcdb2;
+  --rose: #d3886f;
+  --cyan: #9cc6d8;
+  --bg-top: #191417;
+  --bg-mid: #191417;
+  --bg-bottom: #130f11;
+}
+
+:root[data-theme='signal'] {
+  --bg: #11151c;
+  --panel: rgba(24, 29, 38, 0.9);
+  --panel-soft: rgba(28, 34, 44, 0.84);
+  --line: rgba(221, 228, 241, 0.12);
+  --text: #f4f7fb;
+  --muted: #a9b3c2;
+  --gold: #7aa2ff;
+  --gold-soft: #cddcff;
+  --rose: #ff8a73;
+  --cyan: #8abbe8;
+  --bg-top: #11151c;
+  --bg-mid: #11151c;
+  --bg-bottom: #0d1016;
+}
+
+:root[data-theme='orchid'] {
+  --bg: #171320;
+  --panel: rgba(33, 28, 43, 0.9);
+  --panel-soft: rgba(39, 33, 50, 0.84);
+  --line: rgba(231, 222, 247, 0.1);
+  --text: #f5f0ff;
+  --muted: #b7accd;
+  --gold: #9585eb;
+  --gold-soft: #d7cff6;
+  --rose: #ff8db2;
+  --cyan: #8edee4;
+  --bg-top: #171320;
+  --bg-mid: #171320;
+  --bg-bottom: #120f18;
+}
+
+:root[data-theme='moss'] {
+  --bg: #141915;
+  --panel: rgba(28, 34, 29, 0.9);
+  --panel-soft: rgba(33, 40, 35, 0.84);
+  --line: rgba(224, 235, 225, 0.1);
+  --text: #eef5ef;
+  --muted: #aab8ac;
+  --gold: #7da787;
+  --gold-soft: #cadccf;
+  --rose: #d89a83;
+  --cyan: #9cb8ab;
+  --bg-top: #141915;
+  --bg-mid: #141915;
+  --bg-bottom: #101411;
 }
 
 html {
@@ -23,10 +135,17 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: var(--body);
-  background:
-    radial-gradient(circle at top left, rgba(240, 198, 116, 0.1), transparent 28%),
-    linear-gradient(180deg, #1a1622 0%, #121018 52%, #0f0d14 100%);
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 72%, var(--bg-bottom) 100%);
   color: var(--text);
+  transition:
+    background 220ms ease,
+    color 220ms ease;
+}
+
+input,
+select,
+textarea {
+  color-scheme: inherit;
 }
 
 a {
@@ -55,8 +174,8 @@ button {
   width: 24rem;
   height: 24rem;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(240, 198, 116, 0.12), transparent 66%);
-  filter: blur(40px);
+  background: rgba(255, 255, 255, 0.015);
+  filter: blur(60px);
   pointer-events: none;
   z-index: 0;
 }
@@ -74,6 +193,14 @@ button {
   backdrop-filter: blur(18px);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+:root[data-mode='light'] .glass {
+  backdrop-filter: blur(14px);
 }
 
 .pill {
@@ -88,6 +215,10 @@ button {
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+:root[data-mode='light'] .pill {
+  background: rgba(24, 34, 52, 0.03);
 }
 
 .eyebrow-dot {
