@@ -1,0 +1,118 @@
+:root {
+  color-scheme: dark;
+  --bg: #121018;
+  --panel: rgba(28, 25, 36, 0.82);
+  --panel-soft: rgba(34, 29, 45, 0.72);
+  --line: rgba(240, 232, 214, 0.1);
+  --text: #f6f0e4;
+  --muted: #b9b0a2;
+  --gold: #f0c674;
+  --gold-soft: #f3e4b4;
+  --rose: #d3886f;
+  --cyan: #9cc6d8;
+  --shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
+  --display: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --body: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--body);
+  background:
+    radial-gradient(circle at top left, rgba(240, 198, 116, 0.1), transparent 28%),
+    linear-gradient(180deg, #1a1622 0%, #121018 52%, #0f0d14 100%);
+  color: var(--text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.shell {
+  position: relative;
+  overflow: clip;
+}
+
+.shell::before {
+  content: "";
+  position: fixed;
+  top: -8rem;
+  right: -8rem;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(240, 198, 116, 0.12), transparent 66%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1rem 0 4rem;
+}
+
+.glass {
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.eyebrow-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--gold);
+  box-shadow: 0 0 12px rgba(240, 198, 116, 0.45);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    width: min(100% - 1rem, 1180px);
+    padding-top: 0.75rem;
+  }
+}
